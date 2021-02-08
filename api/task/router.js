@@ -19,7 +19,7 @@ router.post("/", checkBody, async (req, res, next) => {
     Tasks.addTask(task)
         .then((newId) => {
             const [id] = newId;
-            Tasks.getTask(id)
+            Tasks.getTaskById(id)
                 .then((newTask) => res.status(201).json(newTask))
                 .catch((err) => {
                     err.statusCode = 500;
