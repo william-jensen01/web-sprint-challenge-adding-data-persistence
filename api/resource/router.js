@@ -4,13 +4,13 @@ const Resources = require('./model');
 const router = express.Router();
 
 router.get("/", (req, res, next) => {
-    Resources.getResources()
-      .then((resources) => res.status(200).json(resources))
-      .catch((err) => {
-        err.statusCode = 500;
-        err.message = "Server failed to get list of resources";
-        next(err);
-      });
+  Resources.getResources()
+    .then((resources) => res.status(200).json(resources))
+    .catch((err) => {
+      err.statusCode = 500;
+      err.message = "Failed to get list of resources";
+      next(err);
+    });
   });
 
   router.post("/", checkBody, (req, res, next) => {

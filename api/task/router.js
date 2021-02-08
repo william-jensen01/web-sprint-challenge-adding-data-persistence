@@ -3,33 +3,36 @@ const express = require('express');
 const Tasks = require('./model');
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-    try {
-        const tasks = await Tasks.getTasks();
-        res.status(200).json(tasks)
-    } catch (err) {
-        err.message = "Failed to get list of tasks"
-        next(err)
-    }
+router.get("/", (req, res, next) => {
+    Tasks.getTasks()
+        .then((tasks) => res.status(200).json(tasks))
+        .catch((err) => {
+            err.statusCode = 500;
+            err.message = "Failed to get list of tasks";
+            next(err);
+        });
 });
 
-router.get('/:id', checkId, async (req, res, next) => {
-    try {
-        res.json(req.task)
-    } catch (err) {
-        next(err)
-    }
-})
-
-router.post('/', checkBody, async (req, res, next) => {
-    try {
-        const newTask = await Tasks.addTask(req.task)
-        res.status(201).json(newTask)
-    } catch (err) {
-        err.message = "Failed to add new task"
-        next(err)
-    }
-})
+router.post("/", checkBody, async (req, res, next) => {
+    const task = req.task;
+    
+    Tasks.addTask(task)
+        .then((newId) => {
+            const [id] = newId;
+            Tasks.getTask(id)
+                .then((newTask) => res.status(201).json(newTask))
+                .catch((err) => {
+                    err.statusCode = 500;
+                    err.message = "Failed to add a new task.";
+                    next(err);
+                });
+            })
+        .catch((err) => {
+            err.statusCode = 500;
+            err.message = "Failed to add a new task.";
+            next(err);
+        });
+});
 
 function checkBody (req, res, next) {
     const body = req.body;
@@ -40,25 +43,6 @@ function checkBody (req, res, next) {
     } else {
         req.task = body;
         next();
-    }
-}
-
-function checkId (req, res, next) {
-    const { id } = req.params;
-    try {
-        const task = Tasks.getTaskById(id);
-        if (task) {
-            req.task = task;
-            next()
-        } else {
-            const err = new Error('Invalid id');
-            err.statusCode = 404;
-            next(err)
-        }
-    } catch (err) {
-        err.statusCode = 500;
-        err.message = 'Failed to get task';
-        next(err);
     }
 }
 

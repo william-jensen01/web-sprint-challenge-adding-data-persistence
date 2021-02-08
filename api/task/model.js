@@ -2,18 +2,26 @@
 const db = require('../../data/dbConfig');
 
 async function getTasks() {
-    return await db("tasks");
-}
+    const tasks = await db("tasks").join("projects", "tasks.project_id", "=", "projects.project_id");
+  
+    return tasks.map((task) => {
+      return {
+        ...task,
+        task_completed: task.task_completed === 0 ? false : true,
+      };
+    });
+  }
 
 async function getTaskById(id) {
-    const [task] = await db("tasks").where({ id })
-    return task;
+    const [task] = await db("tasks").where({ task_id: id });
+    return {
+      ...task,
+      task_completed: task.task_completed === 0 ? false : true,
+    };
 }
 
-async function addTask(data) {
-    const [taskId] = await db("tasks").insert(data);
-    const newTask = await getTaskById(taskId);
-    return newTask;
+function addTask(data) {
+    return db("tasks").insert(data);
 }
 
 module.exports = {
