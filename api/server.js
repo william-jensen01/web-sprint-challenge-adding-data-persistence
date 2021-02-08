@@ -11,4 +11,9 @@ server.use('/api/projects', ProjectsRouter);
 server.use('/api/resources', ResourcesRouter);
 server.use('/api/tasks', TasksRouter);
 
+server.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({ message: err.message, stack: err.stack} )
+})
+
 module.exports = server;
