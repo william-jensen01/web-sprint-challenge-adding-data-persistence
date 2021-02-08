@@ -36,7 +36,7 @@ router.post("/", checkBody, (req, res, next) => {
 
 function checkBody (req, res, next) {
     const body = req.body;
-    if (!body || !body.project_name || !body.project_description) {
+    if (!body || !body.project_name) {
         const err = new Error("body must include 'project_name' and 'project_description'");
         err.statusCode = 400;
         next(err)
