@@ -2,8 +2,7 @@
 const db = require('../../data/dbConfig');
 
 async function getTasks() {
-    const tasks = await db("tasks").join("projects", "tasks.project_id", "=", "projects.project_id");
-  
+    const tasks = await db("tasks");
     return tasks.map((task) => {
       return {
         ...task,

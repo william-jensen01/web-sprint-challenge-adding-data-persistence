@@ -41,7 +41,7 @@ function checkBody (req, res, next) {
         err.statusCode = 400;
         next(err)
     } else {
-        req.project = body;
+        req.resource = body;
         next();
     }
 }
