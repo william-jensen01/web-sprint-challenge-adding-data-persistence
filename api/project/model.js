@@ -20,9 +20,7 @@ async function getProjectById(id) {
 }
 
 async function addProject(data) {
-    const [newProjectId] = await db("projects").insert(data);
-    const newProject = await getProjectById(newProjectId);
-    return newProject;
+  return db("projects").insert(data)
 }
 
 module.exports = {
